@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from tutorial.items import QuteItem
 
 
 class QuotesSpider(scrapy.Spider):
@@ -8,4 +9,9 @@ class QuotesSpider(scrapy.Spider):
     start_urls = ['http://quotes.toscrape.com/']
 
     def parse(self, response):
-        pass
+        quotes = response.css('.quote')
+        for quote in quotes:
+            item = QuteItem()
+            item['text'] = quote.css('.text::text').extract_first()
+            item['author'] = quote.css('.author::text').extract_first()
+            item['tags'] = quote.css('.tags .tag::text').extract()

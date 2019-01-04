@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+
 from tutorial.items import QuteItem
 
 
@@ -15,3 +16,7 @@ class QuotesSpider(scrapy.Spider):
             item['text'] = quote.css('.text::text').extract_first()
             item['author'] = quote.css('.author::text').extract_first()
             item['tags'] = quote.css('.tags .tag::text').extract()
+
+        next = response.css('.pager .next a::attr(href)').extract_first()
+        url = response.urljoin(next)
+        yield scrapy.Request(url=url, callback=self.parse)
